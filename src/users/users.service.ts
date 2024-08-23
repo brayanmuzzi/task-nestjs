@@ -14,21 +14,25 @@ export class UsersService {
   ) {}
 
   async create(newUser: UserDto) {
-    const userRegistered = await this.findByName(newUser.username);
+    try {
+      const userRegistered = await this.findByName(newUser.username);
 
-    if (userRegistered) {
-      throw new ConflictException(
-        `User is '${newUser.username}' already registered!`,
-      );
+      if (userRegistered) {
+        throw new ConflictException(
+          `User is '${newUser.username}' already registered!`,
+        );
+      }
+
+      const databaseUser = new UserEntity();
+      databaseUser.username = newUser.username;
+      databaseUser.passwordHash = bcryptHashSync(newUser.password, 10);
+
+      const { id, username } = await this.usersRepository.save(databaseUser);
+
+      return { id, username };
+    } catch (error) {
+      console.log(error);
     }
-
-    const databaseUser = new UserEntity();
-    databaseUser.username = newUser.username;
-    databaseUser.passwordHash = bcryptHashSync(newUser.password, 10);
-
-    const { id, username } = await this.usersRepository.save(databaseUser);
-
-    return { id, username };
   }
 
   async findByName(username: string): Promise<UserDto | null> {
