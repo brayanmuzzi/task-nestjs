@@ -1,6 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { UserDto } from './user.dto';
-import { v4 as uuid } from 'uuid';
 import { hashSync as bcryptHashSync } from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/db/entities/user.entity';
@@ -19,7 +18,7 @@ export class UsersService {
 
       if (userRegistered) {
         throw new ConflictException(
-          `User is '${newUser.username}' already registered!`,
+          `User '${newUser.username}' is already registered!`,
         );
       }
 

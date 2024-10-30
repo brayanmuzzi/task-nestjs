@@ -5,6 +5,8 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
+  await app.listen(3000);
   const config = new DocumentBuilder()
     .setTitle('Task Management API')
     .setDescription('Endpoints descriptions')
@@ -12,8 +14,6 @@ async function bootstrap() {
     .addTag('Tasks')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
-  app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3000);
+  SwaggerModule.setup('document', app, document);
 }
 bootstrap();

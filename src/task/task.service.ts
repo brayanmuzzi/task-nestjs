@@ -1,6 +1,5 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { FindAllParameters, TaskDto, TaskStatusEnum } from './task.dto';
-import { v4 as uuid } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Like, Repository } from 'typeorm';
 import { TaskEntity } from './../db/entities/task.entity';
@@ -11,8 +10,6 @@ export class TaskService {
     @InjectRepository(TaskEntity)
     private readonly taskRepository: Repository<TaskEntity>,
   ) {}
-
-  private tasks: TaskDto[] = [];
 
   async create(task: TaskDto) {
     const taskSave: TaskEntity = {
