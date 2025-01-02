@@ -13,16 +13,25 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  await app.listen(3000);
 
   const config = new DocumentBuilder()
     .setTitle('Task Management API')
-    .setDescription('Endpoints descriptions')
+    .setDescription('')
     .setVersion('1.0')
     .addTag('Tasks')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('document', app, document);
+
+  process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+  });
+
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  });
+
+  await app.listen(3000);
 }
 bootstrap();

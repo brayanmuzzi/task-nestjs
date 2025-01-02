@@ -1,7 +1,7 @@
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserDto } from './user.dto';
 import { hashSync as bcryptHashSync } from 'bcrypt';
@@ -34,10 +34,11 @@ export class UsersService {
 
       return { id, username };
     } catch (error) {
-      console.error('Error in user creation:', error);
-      throw new BadRequestException(
-        'Unable to create user. Please try again later.',
-      );
+      if (error instanceof ConflictException) {
+        throw error;
+      }
+      console.error('Unexpected error in user creation:', error);
+      throw new BadRequestException('Unable to create user.');
     }
   }
 
