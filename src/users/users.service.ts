@@ -34,11 +34,7 @@ export class UsersService {
 
       return { id, username };
     } catch (error) {
-      if (error instanceof ConflictException) {
-        throw error;
-      }
-
-      console.error('Error creating user:', error);
+      console.error('Error in user creation:', error);
       throw new BadRequestException(
         'Unable to create user. Please try again later.',
       );
