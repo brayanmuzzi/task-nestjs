@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { UserDto } from './user.dto';
 import { hashSync as bcryptHashSync } from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -30,23 +34,37 @@ export class UsersService {
 
       return { id, username };
     } catch (error) {
-      console.log(error);
+      if (error instanceof ConflictException) {
+        throw error;
+      }
+
+      console.error('Error creating user:', error);
+      throw new BadRequestException(
+        'Unable to create user. Please try again later.',
+      );
     }
   }
 
   async findByName(username: string): Promise<UserDto | null> {
-    const userFound = await this.usersRepository.findOne({
-      where: { username },
-    });
+    try {
+      const userFound = await this.usersRepository.findOne({
+        where: { username },
+      });
 
-    if (!userFound) {
-      return null;
+      if (!userFound) {
+        return null;
+      }
+
+      return {
+        id: userFound.id,
+        username: userFound.username,
+        password: userFound.passwordHash,
+      };
+    } catch (error) {
+      console.error('Error finding user:', error);
+      throw new BadRequestException(
+        'An error occurred while searching for the user.',
+      );
     }
-
-    return {
-      id: userFound.id,
-      username: userFound.username,
-      password: userFound.passwordHash,
-    };
   }
 }
