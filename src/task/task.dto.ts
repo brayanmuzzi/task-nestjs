@@ -18,29 +18,44 @@ export enum TaskStatusEnum {
 
 export class TaskDto {
   @IsUUID()
-  @ApiProperty()
+  @ApiProperty({
+    description: `Task id`,
+    example: ['id'],
+  })
   @IsOptional()
   id: string;
 
   @IsString()
   @MinLength(3)
-  @ApiProperty()
+  @ApiProperty({
+    description: `Task title`,
+    example: ['title'],
+  })
   @MaxLength(256)
   title: string;
 
   @IsString()
-  @ApiProperty()
+  @ApiProperty({
+    description: `A description for a task`,
+    example: ['This is a task'],
+  })
   @MinLength(3)
   @MaxLength(256)
   description: string;
 
   @IsEnum(TaskStatusEnum)
-  @ApiProperty()
+  @ApiProperty({
+    description: `A status for tasks that can be TO_DO, IN_PROGRESS and DONE.`,
+    example: ['TO_DO'],
+  })
   @IsOptional()
   status: string;
 
   @IsDateString()
-  @ApiProperty()
+  @ApiProperty({
+    description: `Time for task expires or be finished`,
+    example: ['Date'],
+  })
   expirationDate: Date;
 }
 
