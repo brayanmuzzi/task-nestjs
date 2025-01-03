@@ -19,6 +19,7 @@ export enum TaskStatusEnum {
 export class TaskDto {
   @IsUUID()
   @ApiProperty({
+    type: String,
     description: `Task id`,
     example: ['id'],
   })
@@ -28,6 +29,7 @@ export class TaskDto {
   @IsString()
   @MinLength(3)
   @ApiProperty({
+    type: String,
     description: `Task title`,
     example: ['title'],
   })
@@ -36,6 +38,7 @@ export class TaskDto {
 
   @IsString()
   @ApiProperty({
+    type: String,
     description: `A description for a task`,
     example: ['This is a task'],
   })
@@ -45,6 +48,7 @@ export class TaskDto {
 
   @IsEnum(TaskStatusEnum)
   @ApiProperty({
+    type: String,
     description: `A status for tasks that can be TO_DO, IN_PROGRESS and DONE.`,
     example: ['TO_DO'],
   })
@@ -53,6 +57,7 @@ export class TaskDto {
 
   @IsDateString()
   @ApiProperty({
+    type: Date,
     description: `Time for task expires or be finished`,
     example: ['Date'],
   })

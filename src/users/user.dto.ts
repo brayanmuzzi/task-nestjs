@@ -9,6 +9,7 @@ import {
 
 export class UserDto {
   @ApiProperty({
+    type: String,
     description: `A user id`,
     example: ['id'],
   })
@@ -17,6 +18,7 @@ export class UserDto {
   id?: string;
 
   @ApiProperty({
+    type: String,
     description: `A username`,
     example: ['username'],
   })
@@ -25,6 +27,7 @@ export class UserDto {
   username: string;
 
   @ApiProperty({
+    type: String,
     description: `A password with at least 8 characters and a maximum of 24`,
     example: ['123456789'],
   })

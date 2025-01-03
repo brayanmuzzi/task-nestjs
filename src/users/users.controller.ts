@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDto } from './user.dto';
 import {
@@ -12,6 +12,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create user in database' })
   @ApiOkResponse({ description: 'User was created.' })
   @ApiNotFoundResponse({ description: 'User cannot be created.' })
