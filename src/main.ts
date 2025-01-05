@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { AllExceptionsFilter } from './common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,6 +15,8 @@ async function bootstrap() {
     }),
   );
 
+  app.useGlobalFilters(new AllExceptionsFilter());
+
   const config = new DocumentBuilder()
     .setTitle('Task Management API')
     .setDescription('')
@@ -24,13 +27,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  process.on('uncaughtException', (err) => {
-    console.error('Uncaught Exception:', err);
-  });
+  // process.on('uncaughtException', (err) => {
+  //   console.error('Uncaught Exception:', err);
+  // });
 
-  process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  });
+  // process.on('unhandledRejection', (reason, promise) => {
+  //   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  // });
 
   await app.listen(3000);
 }
