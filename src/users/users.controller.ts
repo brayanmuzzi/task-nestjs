@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDto } from './user.dto';
 import {
@@ -17,6 +24,21 @@ export class UsersController {
   @ApiOkResponse({ description: 'User was created.' })
   @ApiNotFoundResponse({ description: 'User cannot be created.' })
   async create(@Body() user: UserDto) {
-    this.usersService.create(user);
+    try {
+      const result = await this.usersService.create(user);
+      return result;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Unexpected error occurred while fetching the resource',
+          details: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
