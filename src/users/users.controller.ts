@@ -28,16 +28,13 @@ export class UsersController {
       const result = await this.usersService.create(user);
       return result;
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
       throw new HttpException(
         {
-          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          statusCode: HttpStatus.CONFLICT,
           message: 'Unexpected error occurred while fetching the resource',
           details: error.message,
         },
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.CONFLICT,
       );
     }
   }
