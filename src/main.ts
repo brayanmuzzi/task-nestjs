@@ -26,15 +26,6 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
-
-  // process.on('uncaughtException', (err) => {
-  //   console.error('Uncaught Exception:', err);
-  // });
-
-  // process.on('unhandledRejection', (reason, promise) => {
-  //   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  // });
-
   await app.listen(3000);
 }
 bootstrap();

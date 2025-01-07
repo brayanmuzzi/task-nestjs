@@ -1,5 +1,6 @@
 import {
   Body,
+  ConflictException,
   Controller,
   HttpCode,
   HttpException,
@@ -28,13 +29,17 @@ export class UsersController {
       const result = await this.usersService.create(user);
       return result;
     } catch (error) {
+      if (error instanceof ConflictException) {
+        throw error;
+      }
+      console.error('Error creating user:', error);
       throw new HttpException(
         {
-          statusCode: HttpStatus.CONFLICT,
-          message: 'Unexpected error occurred while fetching the resource',
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'An unexpected error occurred while creating the user',
           details: error.message,
         },
-        HttpStatus.CONFLICT,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

@@ -29,9 +29,13 @@ export class UsersService {
     databaseUser.username = newUser.username;
     databaseUser.passwordHash = bcryptHashSync(newUser.password, 10);
 
-    const { id, username } = await this.usersRepository.save(databaseUser);
-
-    return { id, username };
+    try {
+      const { id, username } = await this.usersRepository.save(databaseUser);
+      return { id, username };
+    } catch (error) {
+      console.error('Error saving user to the database:', error);
+      throw new InternalServerErrorException('Failed to create user');
+    }
   }
 
   async findByName(username: string): Promise<UserDto | null> {
@@ -51,6 +55,7 @@ export class UsersService {
       };
     } catch (error) {
       console.error('Error finding user:', error);
+      throw new InternalServerErrorException('Failed to create user');
     }
   }
 }
