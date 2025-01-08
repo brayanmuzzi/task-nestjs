@@ -6,6 +6,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
 } from '@nestjs/common';
@@ -46,11 +47,11 @@ export class UsersController {
     }
   }
 
-  @Put()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create user in database' })
-  @ApiOkResponse({ description: 'User was created.' })
-  @ApiNotFoundResponse({ description: 'User cannot be created.' })
+  @ApiOperation({ summary: 'Update user in database' })
+  @ApiOkResponse({ description: 'User was updated.' })
+  @ApiNotFoundResponse({ description: 'User cannot be updated.' })
+  @Patch('/:id')
   async updateUser(
     @Param('id') id: string,
     @Body() updateData: Partial<UserDto>,
