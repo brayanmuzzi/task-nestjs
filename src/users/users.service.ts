@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { UserDto } from './user.dto';
 import { hashSync as bcryptHashSync } from 'bcrypt';
@@ -67,11 +68,23 @@ export class UsersService {
       });
 
       if (!user) {
-        throw new BadRequestException('User not found');
+        throw new NotFoundException(`User with ID ${userId} not found.`);
+      }
+
+      const userRegistered = await this.findByName(updateData.username);
+
+      if (userRegistered) {
+        throw new ConflictException(
+          `User '${updateData.username}' is already taken!`,
+        );
       }
 
       if (updateData.username) {
         user.username = updateData.username;
+      }
+
+      if (updateData.password) {
+        user.passwordHash = bcryptHashSync(updateData.password, 10);
       }
 
       await this.usersRepository.update(userId, updateData);
@@ -86,9 +99,6 @@ export class UsersService {
       };
     } catch (error) {
       console.error('Error updating user:', error);
-      throw new BadRequestException(
-        'Unable to update user. Please try again later.',
-      );
     }
   }
 }

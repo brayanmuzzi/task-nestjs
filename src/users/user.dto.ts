@@ -5,6 +5,7 @@ import {
   IsOptional,
   MinLength,
   MaxLength,
+  IsUUID,
 } from 'class-validator';
 
 export class UserDto {
@@ -15,6 +16,7 @@ export class UserDto {
   })
   @IsOptional()
   @IsString({ message: 'ID must be a valid string.' })
+  @IsUUID('4', { message: 'ID must be a valid UUID version 4.' })
   id?: string;
 
   @ApiProperty({
@@ -24,6 +26,8 @@ export class UserDto {
   })
   @IsString({ message: 'Username must be a string.' })
   @IsNotEmpty({ message: 'Username is required.' })
+  @MinLength(3, { message: 'Password must be at least 3 characters long.' })
+  @MaxLength(24, { message: 'Password cannot exceed 24 characters.' })
   username: string;
 
   @ApiProperty({

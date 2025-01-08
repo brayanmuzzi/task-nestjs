@@ -6,9 +6,9 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
-  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDto } from './user.dto';
@@ -47,15 +47,29 @@ export class UsersController {
     }
   }
 
-  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Update user in database' })
   @ApiOkResponse({ description: 'User was updated.' })
   @ApiNotFoundResponse({ description: 'User cannot be updated.' })
   @Patch('/:id')
   async updateUser(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() updateData: Partial<UserDto>,
   ) {
-    return this.usersService.updateUser(id, updateData);
+    try {
+      return this.usersService.updateUser(id, updateData);
+    } catch (error) {
+      if (error instanceof ConflictException) {
+        throw error;
+      }
+      console.error('Error updating user:', error);
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'An unexpected error occurred while updating the user',
+          details: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
