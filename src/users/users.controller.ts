@@ -5,7 +5,9 @@ import {
   HttpCode,
   HttpException,
   HttpStatus,
+  Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDto } from './user.dto';
@@ -42,5 +44,17 @@ export class UsersController {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  @Put()
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create user in database' })
+  @ApiOkResponse({ description: 'User was created.' })
+  @ApiNotFoundResponse({ description: 'User cannot be created.' })
+  async updateUser(
+    @Param('id') id: string,
+    @Body() updateData: Partial<UserDto>,
+  ) {
+    return this.usersService.updateUser(id, updateData);
   }
 }

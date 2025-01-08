@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -56,6 +57,38 @@ export class UsersService {
     } catch (error) {
       console.error('Error finding user:', error);
       throw new InternalServerErrorException('Failed to create user');
+    }
+  }
+
+  async updateUser(userId: string, updateData: Partial<UserDto>) {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new BadRequestException('User not found');
+      }
+
+      if (updateData.password) {
+        updateData.password = bcryptHashSync(updateData.password, 10);
+      }
+
+      await this.usersRepository.update(userId, updateData);
+
+      const updatedUser = await this.usersRepository.findOne({
+        where: { id: userId },
+      });
+
+      return {
+        id: updatedUser.id,
+        username: updatedUser.username,
+      };
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw new BadRequestException(
+        'Unable to update user. Please try again later.',
+      );
     }
   }
 }
