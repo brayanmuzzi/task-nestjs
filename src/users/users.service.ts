@@ -5,11 +5,14 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { UserDto } from './user.dto';
+import { UserDto } from './dto/user.dto';
 import { hashSync as bcryptHashSync } from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/db/entities/user.entity';
 import { Repository } from 'typeorm';
+import { hashPassword, comparePasswords } from 'src/users/utils/password.utils';
+import { userExists } from 'src/users/utils/user.utils';
+import { UserResponseDto } from './dto/user.response.dto';
 
 @Injectable()
 export class UsersService {
@@ -18,10 +21,8 @@ export class UsersService {
     private readonly usersRepository: Repository<UserEntity>,
   ) {}
 
-  async create(newUser: UserDto) {
-    const userRegistered = await this.findByName(newUser.username);
-
-    if (userRegistered) {
+  async create(newUser: UserDto): Promise<UserResponseDto> {
+    if (await userExists(newUser.username, this.usersRepository)) {
       throw new ConflictException(
         `User '${newUser.username}' is already registered!`,
       );
@@ -71,11 +72,12 @@ export class UsersService {
         throw new NotFoundException(`User with ID ${userId} not found.`);
       }
 
-      const userRegistered = await this.findByName(updateData.username);
-
-      if (userRegistered) {
+      if (
+        updateData.username &&
+        (await userExists(updateData.username, this.usersRepository))
+      ) {
         throw new ConflictException(
-          `User '${updateData.username}' is already taken!`,
+          `Username '${updateData.username}' is already taken!`,
         );
       }
 

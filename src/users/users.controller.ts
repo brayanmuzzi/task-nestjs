@@ -11,7 +11,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UserDto } from './user.dto';
+import { UserDto } from './dto/user.dto';
 import {
   ApiOperation,
   ApiOkResponse,
