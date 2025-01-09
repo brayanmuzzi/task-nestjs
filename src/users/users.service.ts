@@ -87,7 +87,7 @@ export class UsersService {
         user.passwordHash = bcryptHashSync(updateData.password, 10);
       }
 
-      await this.usersRepository.update(userId, updateData);
+      await this.usersRepository.save(user);
 
       const updatedUser = await this.usersRepository.findOne({
         where: { id: userId },
@@ -99,6 +99,15 @@ export class UsersService {
       };
     } catch (error) {
       console.error('Error updating user:', error);
+
+      if (
+        error instanceof NotFoundException ||
+        error instanceof ConflictException
+      ) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException('Failed to update user');
     }
   }
 }
